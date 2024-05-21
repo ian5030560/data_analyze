@@ -23,14 +23,11 @@ for data in unmarriage_growth_data:
     growthRateOfUnMarriageYears.append(data[0])
     growthRateOfUnMarriage.append(data[1])  # Assuming second value in tuple
 
-# Display the data in Streamlit
-st.write(growthRateOfUnMarriageYears)
-st.write(growthRateOfUnMarriage)
-
 # Assuming you want to create a DataFrame and display it
 df = pd.DataFrame({
     'Year': growthRateOfUnMarriageYears,
     'Growth Rate': growthRateOfUnMarriage
 })
+df.set_index('Year', inplace=True)
 
 st.line_chart(df)
