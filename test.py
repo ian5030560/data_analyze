@@ -7,4 +7,4 @@ from db import (
 import math
 
 if __name__ == '__main__':
-    print(getGrowthRateOfUnMarriage())
+    print(getGrowthRateOfFertility())
