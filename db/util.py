@@ -108,13 +108,13 @@ Year = int
 Value = float
 def alignByYear(major: list[tuple[Year, Value]], *data: list[tuple[Year, Value]]):
     """對齊資料們的年份
-    ex: from util import alignByYear
-        data1 = getGrowthRateOfFertility()
-        data2 = getGrowthRateOfCPI()
-        data3 = getGrowthRateOfAgeMarriage()
-        data4 = getGrowthRateOfUnMarriage()
+    ex: from util import alignByYear\n
+        data1 = getGrowthRateOfFertility()\n
+        data2 = getGrowthRateOfCPI()\n
+        data3 = getGrowthRateOfAgeMarriage()\n
+        data4 = getGrowthRateOfUnMarriage()\n
         
-        print(alignByYear(data1, data2, data3, data4))
+        print(alignByYear(data1, data2, data3, data4))\n
     Args:
         major (list[tuple[Year, Value]]): 被對照的資料，年分以它為準
         *data (...list[tuple[Year, Value]]): 需對齊的資料
