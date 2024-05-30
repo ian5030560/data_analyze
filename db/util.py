@@ -39,7 +39,7 @@ def getGrowthRateOfAgeMarriage() -> list[tuple[int, float]]:
     return result
 
 def getCorrelationWithFertility(data: list[tuple[int, float]]) -> float:
-    """計算資料與生育率的相關係數 (使用pearson相關係數)
+    """計算資料與生育率之年增率的相關係數 (使用pearson相關係數)
 
     Args:
         data (list[tuple[int, float]]): 輸入之資料
@@ -102,3 +102,42 @@ def getGrowthRateOfFertility() -> list[tuple[int, float]]:
 getCorrelationOfAgeMarriageAndFertility = lambda: getCorrelationWithFertility(getGrowthRateOfAgeMarriage())
 getCorrelationOfUnmarriageAndFertility = lambda: getCorrelationWithFertility(getGrowthRateOfUnMarriage())
 getCorrelationOfCPIAndFertility = lambda: getCorrelationWithFertility(getGrowthRateOfCPI())
+
+
+Year = int
+Value = float
+def alignByYear(major: list[tuple[Year, Value]], *data: list[tuple[Year, Value]]):
+    """對齊資料們的年份
+    ex: from util import alignByYear
+        data1 = getGrowthRateOfFertility()
+        data2 = getGrowthRateOfCPI()
+        data3 = getGrowthRateOfAgeMarriage()
+        data4 = getGrowthRateOfUnMarriage()
+        
+        print(alignByYear(data1, data2, data3, data4))
+    Args:
+        major (list[tuple[Year, Value]]): 被對照的資料，年分以它為準
+        *data (...list[tuple[Year, Value]]): 需對齊的資料
+    Returns:
+        {year: list[Year], values: list[list[Value]]}: year: 所有年分，values: 為二維陣列, 其中包含所有對其過的值, 長度依*data的數量為準
+    """
+    years = list(map(lambda x: x[0], major))
+    
+    values: list[list[Value]] = []
+    fn = lambda x: x[0] in years
+    for d in data:
+        value: list[Value] = []
+        ys = list(map(lambda x: x[0], d))
+        vs = list(map(lambda x: x[1], d))
+        
+        for year in years:
+            if year in ys:
+                value.append(vs[ys.index(year)])
+            else:
+                value.append(0)
+        values.append(value)
+        
+    return {
+        "year": years,
+        "values": values,
+    }

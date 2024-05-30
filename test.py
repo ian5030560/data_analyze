@@ -1,10 +1,9 @@
 from db import (
     getGrowthRateOfAgeMarriage, getGrowthRateOfUnMarriage, getGrowthRateOfCPI,
     getGrowthRateOfFertility, getCorrelationWithFertility, getCorrelationOfUnmarriageAndFertility,
-    getCorrelationOfAgeMarriageAndFertility, getCorrelationOfCPIAndFertility
+    getCorrelationOfAgeMarriageAndFertility, getCorrelationOfCPIAndFertility,
+    alignByYear
 )
 
-import math
-
-if __name__ == '__main__':
-    print(getGrowthRateOfFertility())
+if __name__ == '__main__': 
+    print(alignByYear(getGrowthRateOfFertility(), getGrowthRateOfCPI(), getGrowthRateOfAgeMarriage(), getGrowthRateOfUnMarriage()))
