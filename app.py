@@ -6,7 +6,7 @@ import altair as alt
 from db import (
     getGrowthRateOfAgeMarriage, getGrowthRateOfUnMarriage, getGrowthRateOfCPI,
     getGrowthRateOfFertility, getCorrelationWithFertility, getCorrelationOfUnmarriageAndFertility,
-    getCorrelationOfAgeMarriageAndFertility, getCorrelationOfCPIAndFertility
+    getCorrelationOfAgeMarriageAndFertility, getCorrelationOfCPIAndFertility,alignByYear
 )
 #把data_list的值分開兩個list來存
 def extract_growth_data(data_list, years_list, values_list):
@@ -66,20 +66,33 @@ dfCPI.set_index('Year', inplace=True)
 st.line_chart(dfCPI)
 
 st.write('生育率與其他關係的年增率')
-checkBoxUnMarriage = st.checkbox("不婚人數的年增率")
-checkBoxMarriage = st.checkbox("平均結婚年齡的年增率")
-checkBoxCPI = st.checkbox("消費者物價指數的年增率")
+alignValue= alignByYear(getGrowthRateOfFertility(), getGrowthRateOfCPI(), getGrowthRateOfAgeMarriage(), getGrowthRateOfUnMarriage(),getGrowthRateOfFertility())
+checkBoxCPI = st.checkbox("消費者物價指數的年增率(10倍)")
+checkBoxMarriage = st.checkbox("平均結婚年齡的年增率(10倍)")
+checkBoxUnMarriage = st.checkbox("不婚人數的年增率(10倍)")
+
+
+
 dfFertility = pd.DataFrame(
     {
-        'Year': growthRateOfFertilityYears,
-        'Fertility Growth Rate':growthRateOfFertility,
-        'UnMarriage Growth Rate': growthRateOfUnMarriage,
-        'Marriage Growth Rate': growthRateOfMarriage,
-        'CPIGrowth Rate': growthRateOfCPI,
+        'Year': alignValue['year'],
+        'Fertility Growth Rate':alignValue['values'][3],
+        'CPI Growth Rate': [i*10 for i in alignValue['values'][0]],
+        'Marriage Growth Rate': [i*10 for i in alignValue['values'][1]],
+        'UnMarriage Growth Rate': [i*10 for i in alignValue['values'][2]],
 })
-
 dfFertility.set_index('Year', inplace=True)
-st.line_chart(dfFertility)
+
+columns_to_show = ['Fertility Growth Rate']  # 預設顯示 Fertility Growth Rate
+if checkBoxCPI:
+    columns_to_show.append('CPI Growth Rate')
+if checkBoxMarriage:
+    columns_to_show.append('Marriage Growth Rate')
+if checkBoxUnMarriage:
+    columns_to_show.append('UnMarriage Growth Rate')
+
+if columns_to_show:
+    st.line_chart(dfFertility[columns_to_show])
 
 
 
