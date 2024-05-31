@@ -34,7 +34,7 @@ def getGrowthRateOfAgeMarriage() -> list[tuple[int, float]]:
     
     result = []
     for i in range(1, len(ages)):
-        result.append((ages[i][0], (ages[i][1] - ages[i - 1][1]) / ages[i][1]))
+        result.append((ages[i][0], (ages[i - 1][1] - ages[i][1]) / ages[i - 1][1]))
         
     return result
 
@@ -72,7 +72,7 @@ def getGrowthRateOfUnMarriage() -> list[tuple[int, float]]:
     
     result = []
     for i in range(1, len(data)):
-        result.append((data[i].year, (data[i].num - data[i - 1].num) / data[i].num))
+        result.append((data[i].year, (data[i - 1].num - data[i].num) / data[i - 1].num))
         
     return result
 
@@ -94,7 +94,7 @@ def getGrowthRateOfFertility() -> list[tuple[int, float]]:
     
     result = []
     for i in range(1, len(data)):
-        result.append((data[i].year, (data[i].value - data[i - 1].value) / data[i].value))
+        result.append((data[i].year, (data[i - 1].value - data[i].value) / data[i - 1].value))
         
     return result
 
@@ -103,10 +103,9 @@ getCorrelationOfAgeMarriageAndFertility = lambda: getCorrelationWithFertility(ge
 getCorrelationOfUnmarriageAndFertility = lambda: getCorrelationWithFertility(getGrowthRateOfUnMarriage())
 getCorrelationOfCPIAndFertility = lambda: getCorrelationWithFertility(getGrowthRateOfCPI())
 
-
 Year = int
 Value = float
-def alignByYear(major: list[tuple[Year, Value]], *data: list[tuple[Year, Value]]):
+def alignByYear(major: list[tuple[Year, Value]], *data: list[tuple[Year, Value]]) -> dict["year": list[Year], "values": list[list[Value]]]:
     """對齊資料們的年份
     ex: from util import alignByYear\n
         data1 = getGrowthRateOfFertility()\n
@@ -119,7 +118,7 @@ def alignByYear(major: list[tuple[Year, Value]], *data: list[tuple[Year, Value]]
         major (list[tuple[Year, Value]]): 被對照的資料，年分以它為準
         *data (...list[tuple[Year, Value]]): 需對齊的資料
     Returns:
-        {year: list[Year], values: list[list[Value]]}: year: 所有年分，values: 為二維陣列, 其中包含所有對其過的值, 長度依*data的數量為準
+        {year: list[Year], values: list[list[Value]]}: year: 所有年分，values: 為二維陣列, 其中包含所有對齊過的值, 長度依*data的數量為準
     """
     years = list(map(lambda x: x[0], major))
     

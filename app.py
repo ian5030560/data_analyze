@@ -77,9 +77,9 @@ dfFertility = pd.DataFrame(
     {
         'Year': alignValue['year'],
         'Fertility Growth Rate':alignValue['values'][3],
-        'CPI Growth Rate': [i*10 for i in alignValue['values'][0]],
-        'Marriage Growth Rate': [i*10 for i in alignValue['values'][1]],
-        'UnMarriage Growth Rate': [i*10 for i in alignValue['values'][2]],
+        'CPI Growth Rate': [i for i in alignValue['values'][0]],
+        'Marriage Growth Rate': [i for i in alignValue['values'][1]],
+        'UnMarriage Growth Rate': [i for i in alignValue['values'][2]],
 })
 dfFertility.set_index('Year', inplace=True)
 
