@@ -65,7 +65,7 @@ dfCPI = pd.DataFrame({
 dfCPI.set_index('Year', inplace=True)
 st.line_chart(dfCPI)
 
-st.write('生育率與其他關係的年增率')
+st.write('生育率的年增率')
 alignValue= alignByYear(getGrowthRateOfFertility(), getGrowthRateOfCPI(), getGrowthRateOfAgeMarriage(), getGrowthRateOfUnMarriage(),getGrowthRateOfFertility())
 checkBoxCPI = st.checkbox("消費者物價指數的年增率(10倍)")
 checkBoxMarriage = st.checkbox("平均結婚年齡的年增率(10倍)")
