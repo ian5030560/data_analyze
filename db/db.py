@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, Float, create_engine
 from os import environ
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import sessionmaker
 
 engine = create_engine(environ["SQLALCHEMY_DATABASE_URI"])
@@ -57,5 +57,26 @@ class Fertility(db):
         self.year = year
         self.value = value
 
+class AgeFertility(db):
+    __tablename__ = "age_fertility"
+    
+    year = Column(Integer, primary_key=True)
+    age = Column(Integer, primary_key=True)
+    value = Column(Integer)
+
+    def __init__(self, year: int, age: int, value: int):
+        self.year = year
+        self.value = value
+        
+class FemaleLabor(db):
+    __tablename__ = "female_labor"
+    
+    year = Column(Integer, primary_key=True)
+    value = Column(Float)
+    
+    def __init__(self, year: int, value: float):
+        self.year = year
+        self.value = value
+        
 def initDB():
     db.metadata.create_all(engine)

@@ -22,20 +22,19 @@ def getGrowthRateOfAgeMarriage() -> list[tuple[int, float]]:
     df["age_group"] = df["age_group"].map(convertToAverage)
     groupByYear = df.groupby("year")
     groupKeys = groupByYear.groups.keys()
-    
+   
     ages = []
     for key in groupKeys:
         group = groupByYear.get_group(key)
         numSum = group["num"].sum()
         group.insert(len(group.columns), "rate", group["num"].map(lambda v: v / numSum))
         age = (group["age_group"] * group["rate"]).sum()
-        
         ages.append((key, age))
     
     result = []
     for i in range(1, len(ages)):
-        result.append((ages[i][0], (ages[i - 1][1] - ages[i][1]) / ages[i - 1][1]))
-        
+        result.append((ages[i][0], (ages[i][1] - ages[i - 1][1]) / ages[i - 1][1]))
+    
     return result
 
 def getCorrelationWithFertility(data: list[tuple[int, float]]) -> float:
@@ -72,7 +71,7 @@ def getGrowthRateOfUnMarriage() -> list[tuple[int, float]]:
     
     result = []
     for i in range(1, len(data)):
-        result.append((data[i].year, (data[i - 1].num - data[i].num) / data[i - 1].num))
+        result.append((data[i].year, (data[i].num - data[i - 1].num) / data[i - 1].num))
         
     return result
 
@@ -82,7 +81,7 @@ def getGrowthRateOfCPI() -> list[tuple[int, float]]:
     data: list[CPI] = session.query(CPI).all()
     
     result = []
-    for i in range(1, len(data)):
+    for i in range(0, len(data)):
         result.append((data[i].year, data[i].value / 100))
         
     return result
@@ -94,7 +93,7 @@ def getGrowthRateOfFertility() -> list[tuple[int, float]]:
     
     result = []
     for i in range(1, len(data)):
-        result.append((data[i].year, (data[i - 1].value - data[i].value) / data[i - 1].value))
+        result.append((data[i].year, (data[i].value - data[i - 1].value) / data[i - 1].value))
         
     return result
 

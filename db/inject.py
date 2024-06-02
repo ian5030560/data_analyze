@@ -5,8 +5,8 @@ import re
 conn = sql.connect(
     user="root",
     host="localhost",
-    port=3307,
-    password="ucdw6eak",
+    port=3306,
+    # password="ucdw6eak",
     database="data_analyze",
 )
 cusor = conn.cursor()
@@ -54,7 +54,7 @@ def injectCPI():
 
 
 def injectFertility():
-    df = pd.read_excel("raw/fertility.xlsx")
+    df = pd.read_excel("raw/age_fertility.xlsx")
     (rows, _) = df.shape
     for row in range(rows):
         year, value = df.iloc[row, 0], df.iloc[row, 1]
@@ -81,8 +81,36 @@ def injectUnmarriage():
     cusor.close()
     conn.close()
 
+def injectAgeFertility():
+    df = pd.read_excel("raw/age_fertility.xlsx")
+    (rows, _) = df.shape
 
+    ages = df.columns
+    for row in range(0, rows):
+        (cols, ) = df.iloc[row].shape
+        year = int(df.iloc[row, 0][0: -1])
+        for col in range(1, cols):
+            age = int(ages[col][0: -1])
+            value = int(df.iloc[row, col])
+            cusor.execute("INSERT INTO `age_fertility` VALUES (%d, %d, %d)"%(year, age, value))
+            conn.commit()
+            
+    cusor.close()
+    conn.close()
+
+def injectFemaleLabor():
+    df = pd.read_excel("raw/female_labor.xlsx")
+    (rows, _) = df.shape
+
+    for row in range(1, rows):
+        year, value = df.iloc[row, 0], df.iloc[row, 1]
+        year = int(year.replace("年平均", ""))
+        cusor.execute("INSERT INTO `female_labor` VALUES (%d, %f)"%(year, value))
+        conn.commit()
+        
+    cusor.close()
+    conn.close()
+    
 if __name__ == "__main__":
-    # injectAgeMarriage()
-    injectFertility()
+    injectFemaleLabor()
 
