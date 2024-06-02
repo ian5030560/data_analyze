@@ -2,7 +2,8 @@ from db import (
     getGrowthRateOfAgeMarriage, getGrowthRateOfUnMarriage, getGrowthRateOfCPI,
     getGrowthRateOfFertility, getCorrelationWithFertility, getCorrelationOfUnmarriageAndFertility,
     getCorrelationOfAgeMarriageAndFertility, getCorrelationOfCPIAndFertility,
-    alignByYear
+    alignByYear, getGrowthRateOfFemaleLabor, getGrowthRateOfAgeFertility,
+    getCorrelationOfAgeFertilityAndFertility, getCorrelationOfFemaleLaborAndFertility
 )
 
 if __name__ == '__main__':
@@ -10,6 +11,8 @@ if __name__ == '__main__':
     # print(len(aa['year'])) 
     # print(len(aa['values'][0]))
     # print(list(map(lambda x: (x[0], x[1] * 100), getGrowthRateOfFertility())))
-    print(getCorrelationOfAgeMarriageAndFertility())
-    print(getCorrelationOfCPIAndFertility())
-    print(getCorrelationOfUnmarriageAndFertility())
+    # print(getCorrelationOfAgeMarriageAndFertility())
+    # print(getCorrelationOfCPIAndFertility())
+    # print(getCorrelationOfUnmarriageAndFertility())
+    print(getCorrelationOfFemaleLaborAndFertility())
+    # print(getCorrelationOfAgeFertilityAndFertility())

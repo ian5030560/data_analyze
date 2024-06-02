@@ -111,6 +111,6 @@ def injectFemaleLabor():
     cusor.close()
     conn.close()
     
-if __name__ == "__main__":
-    injectFemaleLabor()
+# if __name__ == "__main__":
+#     injectFemaleLabor()
 

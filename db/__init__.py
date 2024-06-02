@@ -4,3 +4,8 @@ from .util import (
     getGrowthRateOfFertility, getCorrelationWithFertility, getCorrelationOfCPIAndFertility,
     getCorrelationOfAgeMarriageAndFertility, getCorrelationOfUnmarriageAndFertility, alignByYear
 )
+
+from .util2 import (
+    getGrowthRateOfAgeFertility, getGrowthRateOfFemaleLabor,
+    getCorrelationOfAgeFertilityAndFertility, getCorrelationOfFemaleLaborAndFertility
+)

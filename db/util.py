@@ -46,20 +46,21 @@ def getCorrelationWithFertility(data: list[tuple[int, float]]) -> float:
     Returns:
         float: 相關係數
     """
-    data_dict = {"year": [], "value1": []}
-    for age in data:
-        data_dict["year"].append(age[0])
-        data_dict["value1"].append(age[1])
-    
     fertilities = getGrowthRateOfFertility()
-    fertility_dict = {"year": [], "value2": []}
-    for ferality in fertilities:
-        fertility_dict["year"].append(ferality[0])
-        fertility_dict["value2"].append(ferality[1])
         
-    data_df = pd.DataFrame(data_dict)
-    ferality_df = pd.DataFrame(fertility_dict)
+    yearfn = lambda x: x[0]
+    valuefn = lambda x: x[1]
+    data_df = pd.DataFrame({
+        "year": list(map(yearfn, data)),
+        "value1": list(map(valuefn, data)),
+    })
+    ferality_df = pd.DataFrame({
+        "year": list(map(yearfn, fertilities)),
+        "value2": list(map(valuefn, fertilities))
+    })
+    
     merge = pd.merge(data_df, ferality_df, how="inner", on=["year"])
+    print(merge)
     neccess = merge[["value1", "value2"]]
     
     return neccess.corr("pearson").iloc[0, 1]
