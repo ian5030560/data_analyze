@@ -4,8 +4,8 @@ import numpy as np
 import pandas as pd
 import altair as alt
 from db import (
-    getGrowthRateOfAgeMarriage, getGrowthRateOfUnMarriage, getGrowthRateOfCPI,
-    getGrowthRateOfFertility, getCorrelationWithFertility, getCorrelationOfUnmarriageAndFertility,
+    getAgeMarriage, getUnMarriage, getCPI,
+    getFertility, getCorrelationWithFertility, getCorrelationOfUnmarriageAndFertility,
     getCorrelationOfAgeMarriageAndFertility, getCorrelationOfCPIAndFertility,alignByYear
 )
 #把data_list的值分開兩個list來存
@@ -17,10 +17,10 @@ def extract_growth_data(data_list, years_list, values_list):
 st.title('探討我國生育率下降原因之影響程度')
 
 # Fetch the growth rate data
-unmarriage_growth_data = getGrowthRateOfUnMarriage()
-marriage_growth_data = getGrowthRateOfAgeMarriage()
-CPI_growth_data = getGrowthRateOfCPI()
-fertility_growth_data = getGrowthRateOfFertility()
+unmarriage_growth_data = getUnMarriage()
+marriage_growth_data = getAgeMarriage()
+CPI_growth_data = getCPI()
+fertility_growth_data = getFertility()
 
 # Initialize lists to store the data
 growthRateOfUnMarriageYears = []
@@ -66,7 +66,7 @@ dfCPI.set_index('Year', inplace=True)
 st.line_chart(dfCPI)
 
 st.write('生育率的年增率')
-alignValue= alignByYear(getGrowthRateOfFertility(), getGrowthRateOfCPI(), getGrowthRateOfAgeMarriage(), getGrowthRateOfUnMarriage(),getGrowthRateOfFertility())
+alignValue= alignByYear(getFertility(), getCPI(), getAgeMarriage(), getUnMarriage(), getFertility())
 checkBoxCPI = st.checkbox("消費者物價指數的年增率(10倍)")
 checkBoxMarriage = st.checkbox("平均結婚年齡的年增率(10倍)")
 checkBoxUnMarriage = st.checkbox("不婚人數的年增率(10倍)")
@@ -100,9 +100,9 @@ st.write('生育率的相關係數')
 correlationWithFertility = []
 # 設置 X 軸標籤
 labels = ['平均結婚年齡的年增率', '不婚人數的年增率', '消費者物價指數年增率']
-correlationWithFertility.append(abs(getCorrelationWithFertility(getGrowthRateOfAgeMarriage())))
-correlationWithFertility.append(abs(getCorrelationWithFertility(getGrowthRateOfUnMarriage())))
-correlationWithFertility.append(abs(getCorrelationWithFertility(getGrowthRateOfCPI())))
+correlationWithFertility.append(abs(getCorrelationWithFertility(getAgeMarriage())))
+correlationWithFertility.append(abs(getCorrelationWithFertility(getUnMarriage())))
+correlationWithFertility.append(abs(getCorrelationWithFertility(getCPI())))
 # 將數據轉換為 DataFrame
 dfCorrelationWithFertility = pd.DataFrame({
     'Category': labels,

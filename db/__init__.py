@@ -1,11 +1,11 @@
 from .db import initDB
 from .util import (
-    getGrowthRateOfAgeMarriage, getGrowthRateOfUnMarriage, getGrowthRateOfCPI,
-    getGrowthRateOfFertility, getCorrelationWithFertility, getCorrelationOfCPIAndFertility,
+    getAgeMarriage, getUnMarriage, getCPI,
+    getFertility, getCorrelationWithFertility, getCorrelationOfCPIAndFertility,
     getCorrelationOfAgeMarriageAndFertility, getCorrelationOfUnmarriageAndFertility, alignByYear
 )
 
 from .util2 import (
-    getGrowthRateOfAgeFertility, getGrowthRateOfFemaleLabor,
+    getAgeFertility, getFemaleLabor,
     getCorrelationOfAgeFertilityAndFertility, getCorrelationOfFemaleLaborAndFertility
 )

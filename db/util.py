@@ -1,18 +1,16 @@
 from .db import CPI, session, AgeMarrige, Unmarrige, Fertility
 import pandas as pd
 
-def getGrowthRateOfAgeMarriage() -> list[tuple[int, float]]:
-    """計算每年的結婚年齡成長率
+def getAgeMarriage() -> list[tuple[int, float]]:
+    """計算每年的結婚年齡
     """
     data: list[AgeMarrige] = session.query(AgeMarrige).all()
-    data_dict = {"year": [], "age_group": [], "num": []}
-    
-    for dt in data:
-        data_dict["year"].append(dt.year)
-        data_dict["age_group"].append(dt.age_group)
-        data_dict["num"].append(dt.num)
         
-    df = pd.DataFrame(data_dict)
+    df = pd.DataFrame({
+        "year": list(map(lambda x: x.year, data)),
+        "age_group": list(map(lambda x: x.age_group, data)),
+        "num": list(map(lambda x: x.num, data))
+    })
     
     def convertToAverage(val: str):
         start, end = list(map(int, val.split("-")))
@@ -32,13 +30,14 @@ def getGrowthRateOfAgeMarriage() -> list[tuple[int, float]]:
         ages.append((key, age))
     
     result = []
-    for i in range(1, len(ages)):
-        result.append((ages[i][0], (ages[i][1] - ages[i - 1][1]) / ages[i - 1][1]))
-    
+    # for i in range(1, len(ages)):
+    #     result.append((ages[i][0], (ages[i][1] - ages[i - 1][1]) / ages[i - 1][1]))
+    for i in range(0, len(ages)):
+        result.append((ages[i][0], ages[i][1]))
     return result
 
 def getCorrelationWithFertility(data: list[tuple[int, float]]) -> float:
-    """計算資料與生育率之年增率的相關係數 (使用pearson相關係數)
+    """計算資料與生育率的相關係數 (使用pearson相關係數)
 
     Args:
         data (list[tuple[int, float]]): 輸入之資料
@@ -46,7 +45,7 @@ def getCorrelationWithFertility(data: list[tuple[int, float]]) -> float:
     Returns:
         float: 相關係數
     """
-    fertilities = getGrowthRateOfFertility()
+    fertilities = getFertility()
         
     yearfn = lambda x: x[0]
     valuefn = lambda x: x[1]
@@ -60,48 +59,51 @@ def getCorrelationWithFertility(data: list[tuple[int, float]]) -> float:
     })
     
     merge = pd.merge(data_df, ferality_df, how="inner", on=["year"])
-    print(merge)
     neccess = merge[["value1", "value2"]]
     
     return neccess.corr("pearson").iloc[0, 1]
 
-def getGrowthRateOfUnMarriage() -> list[tuple[int, float]]:
-    """取得每年未結婚人數的成長率
+def getUnMarriage() -> list[tuple[int, float]]:
+    """取得每年未結婚人數
     """
     data: list[Unmarrige] = session.query(Unmarrige).all()
     
     result = []
-    for i in range(1, len(data)):
-        result.append((data[i].year, (data[i].num - data[i - 1].num) / data[i - 1].num))
+    # for i in range(1, len(data)):
+    #     result.append((data[i].year, (data[i].num - data[i - 1].num) / data[i - 1].num))
+    for i in range(0, len(data)):
+        result.append((data[i].year, data[i].num))
         
     return result
 
-def getGrowthRateOfCPI() -> list[tuple[int, float]]:
-    """取得每年消費者物價指數(CPI)的成長率
+def getCPI() -> list[tuple[int, float]]:
+    """取得每年消費者物價指數(CPI)
     """
     data: list[CPI] = session.query(CPI).all()
     
     result = []
     for i in range(0, len(data)):
-        result.append((data[i].year, data[i].value / 100))
+        result.append((data[i].year, data[i].value))
         
     return result
 
-def getGrowthRateOfFertility() -> list[tuple[int, float]]:
-    """取得每年生育率的成長率
+def getFertility() -> list[tuple[int, float]]:
+    """取得每年生育率
     """
     data: list[Fertility] = session.query(Fertility).all()
     
     result = []
-    for i in range(1, len(data)):
-        result.append((data[i].year, (data[i].value - data[i - 1].value) / data[i - 1].value))
+    # for i in range(0, len(data)):
+    #     result.append((data[i].year, (data[i].value - data[i - 1].value) / data[i - 1].value))
+    for i in range(0, len(data)):
+        result.append((data[i].year, data[i].value))
         
     return result
 
 
-getCorrelationOfAgeMarriageAndFertility = lambda: getCorrelationWithFertility(getGrowthRateOfAgeMarriage())
-getCorrelationOfUnmarriageAndFertility = lambda: getCorrelationWithFertility(getGrowthRateOfUnMarriage())
-getCorrelationOfCPIAndFertility = lambda: getCorrelationWithFertility(getGrowthRateOfCPI())
+getCorrelationOfAgeMarriageAndFertility = lambda: getCorrelationWithFertility(getAgeMarriage())
+getCorrelationOfUnmarriageAndFertility = lambda: getCorrelationWithFertility(getUnMarriage())
+getCorrelationOfCPIAndFertility = lambda: getCorrelationWithFertility(getCPI())
 
 Year = int
 Value = float

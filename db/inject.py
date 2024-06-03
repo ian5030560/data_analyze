@@ -38,7 +38,7 @@ def injectAgeMarriage():
 
 
 def injectCPI():
-    df = pd.read_excel("raw/cpi.xlsx")
+    df = pd.read_excel("raw/cpi1.xlsx")
     filtered = df[df["統計期"].notna() & df["統計期"].str.contains("年")]
     (rows, _) = filtered.shape
 
@@ -111,6 +111,6 @@ def injectFemaleLabor():
     cusor.close()
     conn.close()
     
-# if __name__ == "__main__":
-#     injectFemaleLabor()
+if __name__ == "__main__":
+    injectCPI()
 
