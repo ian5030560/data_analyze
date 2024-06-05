@@ -3,6 +3,7 @@ import streamlit as st
 import numpy as np
 import pandas as pd
 import altair as alt
+import statistics
 from db import (
     getAgeMarriage, getUnMarriage, getCPI,
     getFertility, getCorrelationWithFertility, getCorrelationOfUnmarriageAndFertility,
@@ -13,6 +14,14 @@ def extract_growth_data(data_list, years_list, values_list):
     for data in data_list:
         years_list.append(data[0])
         values_list.append(data[1])
+
+def count_average(data_list):
+    # 確保 data_list 非空
+    if not data_list:
+        return 0.0
+    # 使用 sum() 函數和 float() 確保數據的精確度
+    avg = sum(float(data) for data in data_list) / len(data_list)
+    return avg
 
 st.title('探討我國生育率下降原因之影響程度')
 
@@ -65,34 +74,57 @@ dfCPI = pd.DataFrame({
 dfCPI.set_index('Year', inplace=True)
 st.line_chart(dfCPI)
 
-st.write('生育率的年增率')
+st.write('生育率的年增率(Z-Score Standardization)')
 alignValue= alignByYear(getFertility(), getCPI(), getAgeMarriage(), getUnMarriage(), getFertility())
-checkBoxCPI = st.checkbox("消費者物價指數的年增率(10倍)")
-checkBoxMarriage = st.checkbox("平均結婚年齡的年增率(10倍)")
-checkBoxUnMarriage = st.checkbox("不婚人數的年增率(10倍)")
 
 
+fertilityGrowthRateStd = []
+CPIGrowthRateStd = []
+marriageGrowthRateStd = []
+unMarriageGrowthRateStd = []
+
+#Count Fertility Growth Rate Z-Score Standardization
+for i in range(len(alignValue['values'][3])):
+    fertilityGrowthRateStd.append((float(alignValue['values'][3][i]) - count_average(alignValue['values'][3]))/statistics.stdev(alignValue['values'][3]))
+    CPIGrowthRateStd.append((float(alignValue['values'][0][i]) - count_average(alignValue['values'][0]))/statistics.stdev(alignValue['values'][0]))
+    marriageGrowthRateStd.append((float(alignValue['values'][1][i]) - count_average(alignValue['values'][1]))/statistics.stdev(alignValue['values'][1]))
+    unMarriageGrowthRateStd.append((float(alignValue['values'][2][i]) - count_average(alignValue['values'][2]))/statistics.stdev(alignValue['values'][2]))
 
 dfFertility = pd.DataFrame(
     {
         'Year': alignValue['year'],
-        'Fertility Growth Rate':alignValue['values'][3],
-        'CPI Growth Rate': [i for i in alignValue['values'][0]],
-        'Marriage Growth Rate': [i for i in alignValue['values'][1]],
-        'UnMarriage Growth Rate': [i for i in alignValue['values'][2]],
+        'Fertility Growth Rate':fertilityGrowthRateStd,
+        'CPI Growth Rate': CPIGrowthRateStd,
+        'Marriage Growth Rate': marriageGrowthRateStd,
+        'UnMarriage Growth Rate': unMarriageGrowthRateStd,
 })
 dfFertility.set_index('Year', inplace=True)
 
-columns_to_show = ['Fertility Growth Rate']  # 預設顯示 Fertility Growth Rate
-if checkBoxCPI:
-    columns_to_show.append('CPI Growth Rate')
-if checkBoxMarriage:
-    columns_to_show.append('Marriage Growth Rate')
-if checkBoxUnMarriage:
-    columns_to_show.append('UnMarriage Growth Rate')
+# 單選按鈕選項
+options = [
+    'None',  # 可以選擇不添加
+    "消費者物價指數(Z-Score Standardization)",
+    "平均結婚年齡(Z-Score Standardization)",
+    "不婚人數(Z-Score Standardization)"
+]
+options_mappings = {
+    'None':'None',  # 可以選擇不添加
+    "消費者物價指數(Z-Score Standardization)":'CPI Growth Rate',
+    "平均結婚年齡(Z-Score Standardization)":'Marriage Growth Rate',
+    "不婚人數(Z-Score Standardization)":'UnMarriage Growth Rate'
+}
 
-if columns_to_show:
-    st.line_chart(dfFertility[columns_to_show])
+selected_option = st.radio("選擇要比對的項目(此為標準化過後的數據)", options)
+
+# 預設顯示 Fertility Growth Rate
+columns_to_show = ['Fertility Growth Rate']
+
+# 如果選擇了其他成長率，則添加到顯示的列中
+if selected_option != 'None':
+    columns_to_show.append(options_mappings[selected_option])
+
+# 顯示選擇的成長率
+st.line_chart(dfFertility[columns_to_show])
 
 
 

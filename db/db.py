@@ -80,3 +80,4 @@ class FemaleLabor(db):
         
 def initDB():
     db.metadata.create_all(engine)
+

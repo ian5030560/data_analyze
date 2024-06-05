@@ -5,8 +5,8 @@ import re
 conn = sql.connect(
     user="root",
     host="localhost",
-    port=3306,
-    # password="ucdw6eak",
+    port=3307,
+    password="ucdw6eak",
     database="data_analyze",
 )
 cusor = conn.cursor()
@@ -112,5 +112,5 @@ def injectFemaleLabor():
     conn.close()
     
 if __name__ == "__main__":
-    injectCPI()
+    injectAgeFertility()
 
