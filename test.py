@@ -7,8 +7,5 @@ from db import (
 )
 
 if __name__ == '__main__':
-    print(getCorrelationOfAgeMarriageAndFertility())
-    print(getCorrelationOfCPIAndFertility())
-    print(getCorrelationOfUnmarriageAndFertility())
-    print(getCorrelationOfFemaleLaborAndFertility())
-    print(getCorrelationOfAgeFertilityAndFertility())
+    print(getFemaleLabor())
+    print(getAgeFertility())

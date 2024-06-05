@@ -7,7 +7,9 @@ import statistics
 from db import (
     getAgeMarriage, getUnMarriage, getCPI,
     getFertility, getCorrelationWithFertility, getCorrelationOfUnmarriageAndFertility,
-    getCorrelationOfAgeMarriageAndFertility, getCorrelationOfCPIAndFertility,alignByYear
+    getCorrelationOfAgeMarriageAndFertility, getCorrelationOfCPIAndFertility,
+    alignByYear, getFemaleLabor, getAgeFertility,
+    getCorrelationOfAgeFertilityAndFertility, getCorrelationOfFemaleLaborAndFertility
 )
 #把data_list的值分開兩個list來存
 def extract_growth_data(data_list, years_list, values_list):
@@ -30,6 +32,8 @@ unmarriage_growth_data = getUnMarriage()
 marriage_growth_data = getAgeMarriage()
 CPI_growth_data = getCPI()
 fertility_growth_data = getFertility()
+FemaleLabor_data = getFemaleLabor()
+AgeFertility_data = getAgeFertility()
 
 # Initialize lists to store the data
 growthRateOfUnMarriageYears = []
@@ -44,11 +48,19 @@ growthRateOfCPI = []
 growthRateOfFertilityYears = []
 growthRateOfFertility = []
 
+growthRateOfFemaleLaborYears = []
+growthRateOfFemaleLabor= []
+
+growthRateOfAgeFertilityYears = []
+growthRateOfAgeFertility= []
+
 extract_growth_data(unmarriage_growth_data, growthRateOfUnMarriageYears, growthRateOfUnMarriage)
 extract_growth_data(marriage_growth_data, growthRateOfMarriageYears, growthRateOfMarriage)
 extract_growth_data(CPI_growth_data, growthRateOfCPIYears, growthRateOfCPI)
 extract_growth_data(fertility_growth_data,growthRateOfFertilityYears,growthRateOfFertility)
-st.write('不婚人數的年增率')
+extract_growth_data(FemaleLabor_data,growthRateOfFemaleLaborYears,growthRateOfFemaleLabor)
+extract_growth_data(AgeFertility_data,growthRateOfAgeFertilityYears,growthRateOfAgeFertility)
+st.write('不婚人數')
 # Assuming you want to create a DataFrame and display it
 dfUnMarriage = pd.DataFrame({
     'Year': growthRateOfUnMarriageYears,
@@ -58,7 +70,7 @@ dfUnMarriage.set_index('Year', inplace=True)
 
 st.line_chart(dfUnMarriage)
 
-st.write('平均結婚年齡的年增率')
+st.write('平均結婚年齡')
 dfMarriage = pd.DataFrame({
     'Year': growthRateOfMarriageYears,
     'Growth Rate': growthRateOfMarriage
@@ -66,7 +78,7 @@ dfMarriage = pd.DataFrame({
 dfMarriage.set_index('Year', inplace=True)
 st.line_chart(dfMarriage)
 
-st.write('消費者物價指數的年增率')
+st.write('消費者物價指數')
 dfCPI = pd.DataFrame({
     'Year': growthRateOfCPIYears,
     'Growth Rate': growthRateOfCPI
@@ -74,14 +86,34 @@ dfCPI = pd.DataFrame({
 dfCPI.set_index('Year', inplace=True)
 st.line_chart(dfCPI)
 
+st.write('女性勞動參與率')
+dfFemaleLabor = pd.DataFrame({
+    'Year': growthRateOfFemaleLaborYears,
+    'Growth Rate': growthRateOfFemaleLabor
+})
+dfFemaleLabor.set_index('Year', inplace=True)
+st.line_chart(dfFemaleLabor)
+
+st.write('平均生育年齡')
+dfAgeFertility = pd.DataFrame({
+    'Year': growthRateOfAgeFertilityYears,
+    'Growth Rate': growthRateOfAgeFertility
+})
+dfAgeFertility.set_index('Year', inplace=True)
+st.line_chart(dfAgeFertility)
+
+
+
 st.write('生育率的年增率(Z-Score Standardization)')
-alignValue= alignByYear(getFertility(), getCPI(), getAgeMarriage(), getUnMarriage(), getFertility())
+alignValue= alignByYear(getFertility(), getCPI(), getAgeMarriage(), getUnMarriage(), getFertility(),getFemaleLabor(),getAgeFertility())
 
 
 fertilityGrowthRateStd = []
 CPIGrowthRateStd = []
 marriageGrowthRateStd = []
 unMarriageGrowthRateStd = []
+femaleLaborGrowthRateStd= []
+ageFertilityGrowthRateStd= []
 
 #Count Fertility Growth Rate Z-Score Standardization
 for i in range(len(alignValue['values'][3])):
@@ -89,6 +121,8 @@ for i in range(len(alignValue['values'][3])):
     CPIGrowthRateStd.append((float(alignValue['values'][0][i]) - count_average(alignValue['values'][0]))/statistics.stdev(alignValue['values'][0]))
     marriageGrowthRateStd.append((float(alignValue['values'][1][i]) - count_average(alignValue['values'][1]))/statistics.stdev(alignValue['values'][1]))
     unMarriageGrowthRateStd.append((float(alignValue['values'][2][i]) - count_average(alignValue['values'][2]))/statistics.stdev(alignValue['values'][2]))
+    femaleLaborGrowthRateStd.append((float(alignValue['values'][4][i]) - count_average(alignValue['values'][4]))/statistics.stdev(alignValue['values'][4]))
+    ageFertilityGrowthRateStd.append((float(alignValue['values'][5][i]) - count_average(alignValue['values'][5]))/statistics.stdev(alignValue['values'][5]))
 
 dfFertility = pd.DataFrame(
     {
@@ -97,6 +131,8 @@ dfFertility = pd.DataFrame(
         'CPI Growth Rate': CPIGrowthRateStd,
         'Marriage Growth Rate': marriageGrowthRateStd,
         'UnMarriage Growth Rate': unMarriageGrowthRateStd,
+        'FemaleLabor Growth Rate': femaleLaborGrowthRateStd,
+        'AgeFertility Growth Rate': ageFertilityGrowthRateStd,
 })
 dfFertility.set_index('Year', inplace=True)
 
@@ -105,13 +141,17 @@ options = [
     'None',  # 可以選擇不添加
     "消費者物價指數(Z-Score Standardization)",
     "平均結婚年齡(Z-Score Standardization)",
-    "不婚人數(Z-Score Standardization)"
+    "不婚人數(Z-Score Standardization)",
+    "女性勞動參與率(Z-Score Standardization)",
+    "平均生育年齡(Z-Score Standardization)"
 ]
 options_mappings = {
     'None':'None',  # 可以選擇不添加
     "消費者物價指數(Z-Score Standardization)":'CPI Growth Rate',
     "平均結婚年齡(Z-Score Standardization)":'Marriage Growth Rate',
-    "不婚人數(Z-Score Standardization)":'UnMarriage Growth Rate'
+    "不婚人數(Z-Score Standardization)":'UnMarriage Growth Rate',
+    "女性勞動參與率(Z-Score Standardization)":'FemaleLabor Growth Rate',
+    "平均生育年齡(Z-Score Standardization)":'AgeFertility Growth Rate'
 }
 
 selected_option = st.radio("選擇要比對的項目(此為標準化過後的數據)", options)
@@ -131,10 +171,12 @@ st.line_chart(dfFertility[columns_to_show])
 st.write('生育率的相關係數')
 correlationWithFertility = []
 # 設置 X 軸標籤
-labels = ['平均結婚年齡的年增率', '不婚人數的年增率', '消費者物價指數年增率']
+labels = ['平均結婚年齡', '不婚人數', '消費者物價指數','女性勞動參與率','平均生育年齡']
 correlationWithFertility.append(abs(getCorrelationWithFertility(getAgeMarriage())))
 correlationWithFertility.append(abs(getCorrelationWithFertility(getUnMarriage())))
 correlationWithFertility.append(abs(getCorrelationWithFertility(getCPI())))
+correlationWithFertility.append(abs(getCorrelationWithFertility(getFemaleLabor())))
+correlationWithFertility.append(abs(getCorrelationWithFertility(getAgeFertility())))
 # 將數據轉換為 DataFrame
 dfCorrelationWithFertility = pd.DataFrame({
     'Category': labels,
