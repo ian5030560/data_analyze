@@ -44,5 +44,5 @@ def getFemaleLabor() -> list[int, float]:
         
     return result
 
-getCorrelationOfAgeFertilityAndFertility = lambda: getCorrelationWithFertility(getGrowthRateOfAgeFertility())
-getCorrelationOfFemaleLaborAndFertility = lambda: getCorrelationWithFertility(getGrowthRateOfFemaleLabor())
+getCorrelationOfAgeFertilityAndFertility = lambda: getCorrelationWithFertility(getAgeFertility())
+getCorrelationOfFemaleLaborAndFertility = lambda: getCorrelationWithFertility(getFemaleLabor())
