@@ -1,8 +1,8 @@
 from .db import CPI, session, AgeFertility, FemaleLabor
-from .util import getCorrelationWithFertility
+from .util import getCorrelationWithFertility, useSession
 import pandas as pd
 
-def getAgeFertility() -> list[int, float]:
+def _getAgeFertility() -> list[int, float]:
     """計算每年的平均生育年齡
     """
     data = session.query(AgeFertility).all()
@@ -30,8 +30,9 @@ def getAgeFertility() -> list[int, float]:
         result.append((ages[i][0], ages[i][1]))
         
     return result
+getAgeFertility = useSession(lambda: _getAgeFertility())
 
-def getFemaleLabor() -> list[int, float]:
+def _getFemaleLabor() -> list[int, float]:
     """計算每年的女性勞動參與率
     """
     data = session.query(FemaleLabor).all()
@@ -43,6 +44,8 @@ def getFemaleLabor() -> list[int, float]:
         result.append((data[i].year, data[i].value))
         
     return result
+
+getFemaleLabor = useSession(lambda: _getFemaleLabor())
 
 getCorrelationOfAgeFertilityAndFertility = lambda: getCorrelationWithFertility(getAgeFertility())
 getCorrelationOfFemaleLaborAndFertility = lambda: getCorrelationWithFertility(getFemaleLabor())

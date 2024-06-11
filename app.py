@@ -127,12 +127,12 @@ for i in range(len(alignValue['values'][3])):
 dfFertility = pd.DataFrame(
     {
         'Year': alignValue['year'],
-        'Fertility Growth Rate':fertilityGrowthRateStd,
-        'CPI Growth Rate': CPIGrowthRateStd,
-        'Marriage Growth Rate': marriageGrowthRateStd,
-        'UnMarriage Growth Rate': unMarriageGrowthRateStd,
-        'FemaleLabor Growth Rate': femaleLaborGrowthRateStd,
-        'AgeFertility Growth Rate': ageFertilityGrowthRateStd,
+        'Fertility':fertilityGrowthRateStd,
+        'CPI': CPIGrowthRateStd,
+        'Marriage': marriageGrowthRateStd,
+        'UnMarriage': unMarriageGrowthRateStd,
+        'FemaleLabor': femaleLaborGrowthRateStd,
+        'AgeFertility': ageFertilityGrowthRateStd,
 })
 dfFertility.set_index('Year', inplace=True)
 
@@ -147,17 +147,17 @@ options = [
 ]
 options_mappings = {
     'None':'None',  # 可以選擇不添加
-    "消費者物價指數(Z-Score Standardization)":'CPI Growth Rate',
-    "平均結婚年齡(Z-Score Standardization)":'Marriage Growth Rate',
-    "不婚人數(Z-Score Standardization)":'UnMarriage Growth Rate',
-    "女性勞動參與率(Z-Score Standardization)":'FemaleLabor Growth Rate',
-    "平均生育年齡(Z-Score Standardization)":'AgeFertility Growth Rate'
+    "消費者物價指數(Z-Score Standardization)":'CPI',
+    "平均結婚年齡(Z-Score Standardization)":'Marriage',
+    "不婚人數(Z-Score Standardization)":'UnMarriage',
+    "女性勞動參與率(Z-Score Standardization)":'FemaleLabor',
+    "平均生育年齡(Z-Score Standardization)":'AgeFertility'
 }
 
 selected_option = st.radio("選擇要比對的項目(此為標準化過後的數據)", options)
 
 # 預設顯示 Fertility Growth Rate
-columns_to_show = ['Fertility Growth Rate']
+columns_to_show = ['Fertility']
 
 # 如果選擇了其他成長率，則添加到顯示的列中
 if selected_option != 'None':
