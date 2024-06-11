@@ -1,11 +1,12 @@
-from .db import CPI, session, AgeFertility, FemaleLabor
-from .util import getCorrelationWithFertility, useSession
+from .db import CPI, AgeFertility, FemaleLabor
+from .util import getCorrelationWithFertility, useAllData
 import pandas as pd
 
-def _getAgeFertility() -> list[int, float]:
+def getAgeFertility() -> list[int, float]:
     """計算每年的平均生育年齡
     """
-    data = session.query(AgeFertility).all()
+    data = useAllData(AgeFertility)
+    
     df = pd.DataFrame({
         "year": list(map(lambda x: x.year, data)),
         "age": list(map(lambda x: x.age, data)),
@@ -24,18 +25,15 @@ def _getAgeFertility() -> list[int, float]:
         ages.append((key, age))
 
     result = []
-    # for i in range(1, len(ages)):
-    #     result.append((ages[i][0], (ages[i][1] - ages[i - 1][1]) / ages[i - 1][1]))
     for i in range(0, len(ages)):
         result.append((ages[i][0], ages[i][1]))
         
     return result
-getAgeFertility = useSession(lambda: _getAgeFertility())
 
-def _getFemaleLabor() -> list[int, float]:
+def getFemaleLabor() -> list[int, float]:
     """計算每年的女性勞動參與率
     """
-    data = session.query(FemaleLabor).all()
+    data = useAllData(FemaleLabor)
     
     result = []
     # for i in range(1, len(data)):
@@ -44,8 +42,6 @@ def _getFemaleLabor() -> list[int, float]:
         result.append((data[i].year, data[i].value))
         
     return result
-
-getFemaleLabor = useSession(lambda: _getFemaleLabor())
 
 getCorrelationOfAgeFertilityAndFertility = lambda: getCorrelationWithFertility(getAgeFertility())
 getCorrelationOfFemaleLaborAndFertility = lambda: getCorrelationWithFertility(getFemaleLabor())

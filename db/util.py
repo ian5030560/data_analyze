@@ -1,19 +1,20 @@
-from .db import CPI, session, AgeMarrige, Unmarrige, Fertility
+from .db import CPI, Session, AgeMarrige, Unmarrige, Fertility
 import pandas as pd
 import typing
 
 T = typing.TypeVar("T")
-def useSession[T](callback: typing.Callable[[], T]):
-    result = callback()
-    session.rollback()
+def useAllData[T](className: typing.Type[T]):
+    session = Session()
+    data = session.query(className).all()
+    session.close()
     
-    return result
-
-def _getAgeMarriage() -> list[tuple[int, float]]:
+    return data
+    
+def getAgeMarriage() -> list[tuple[int, float]]:
     """計算每年的結婚年齡
     """
-    data: list[AgeMarrige] = session.query(AgeMarrige).all()
-        
+    data = useAllData(AgeMarrige)
+    
     df = pd.DataFrame({
         "year": list(map(lambda x: x.year, data)),
         "age_group": list(map(lambda x: x.age_group, data)),
@@ -44,8 +45,6 @@ def _getAgeMarriage() -> list[tuple[int, float]]:
     
     return result
 
-getAgeMarriage = useSession(lambda: _getAgeMarriage())
-
 def getCorrelationWithFertility(data: list[tuple[int, float]]) -> float:
     """計算資料與生育率的相關係數 (使用pearson相關係數)
 
@@ -73,25 +72,21 @@ def getCorrelationWithFertility(data: list[tuple[int, float]]) -> float:
     
     return neccess.corr("pearson").iloc[0, 1]
 
-def _getUnMarriage() -> list[tuple[int, float]]:
+def getUnMarriage() -> list[tuple[int, float]]:
     """取得每年未結婚人數
     """
-    data: list[Unmarrige] = session.query(Unmarrige).all()
+    data = useAllData(Unmarrige)
     
     result = []
-    # for i in range(1, len(data)):
-    #     result.append((data[i].year, (data[i].num - data[i - 1].num) / data[i - 1].num))
     for i in range(0, len(data)):
         result.append((data[i].year, data[i].num))
         
     return result
 
-getUnMarriage = useSession(lambda: _getUnMarriage())
-
-def _getCPI() -> list[tuple[int, float]]:
+def getCPI() -> list[tuple[int, float]]:
     """取得每年消費者物價指數(CPI)
     """
-    data: list[CPI] = session.query(CPI).all()
+    data = useAllData(CPI)
     
     result = []
     for i in range(0, len(data)):
@@ -99,22 +94,17 @@ def _getCPI() -> list[tuple[int, float]]:
         
     return result
 
-getCPI = useSession(lambda: _getCPI())
 
-def _getFertility() -> list[tuple[int, float]]:
+def getFertility() -> list[tuple[int, float]]:
     """取得每年生育率
     """
-    data: list[Fertility] = session.query(Fertility).all()
+    data = useAllData(Fertility)
     
     result = []
-    # for i in range(0, len(data)):
-    #     result.append((data[i].year, (data[i].value - data[i - 1].value) / data[i - 1].value))
     for i in range(0, len(data)):
         result.append((data[i].year, data[i].value))
         
     return result
-
-getFertility = useSession(lambda: _getFertility())
 
 getCorrelationOfAgeMarriageAndFertility = lambda: getCorrelationWithFertility(getAgeMarriage())
 getCorrelationOfUnmarriageAndFertility = lambda: getCorrelationWithFertility(getUnMarriage())

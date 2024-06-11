@@ -6,7 +6,6 @@ from sqlalchemy.orm import sessionmaker
 engine = create_engine(environ["SQLALCHEMY_DATABASE_URI"])
 db = declarative_base()
 Session = sessionmaker(bind=engine)
-session = Session()
 
 class AgeMarrige(db):
     
